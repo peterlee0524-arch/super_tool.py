@@ -1,6 +1,6 @@
 # Super Balance & Tax Simulator (AU)
 
-A command-line / library tool for modelling Australian superannuation (super) and personal tax scenarios.  
+An interactive Streamlit tool (with a reusable Python library) for modelling Australian superannuation (super) and personal tax scenarios.  
 
 ## Features
 - Personal income tax (2024–25 tax rates) + Medicare Levy (2%)  
@@ -12,10 +12,13 @@ A command-line / library tool for modelling Australian superannuation (super) an
 - **Super accumulation phase** investment tax (15%) and fee rate  
 - Balance projection and CSV export  
 
-## Installation & Usage
+## Installation
+Clone the repo and install dependencies:
 ```bash
-python super_tool.py --salary 175000 --negative-gearing 60000 \
-  --salary-sacrifice 8400 --sg-rate 0.12 --cap 30000 --carry-forward 0 \
-  --start-balance 200000 --years 10 --return 0.06 --fees-rate 0.0075 \
-  --private-insured --mls-enabled --mls-threshold 90000 --mls-rate 0.01 \
-  --csv projection.csv
+git clone https://github.com/yourname/super-simulator.git
+cd super-simulator
+pip install -r requirements.txt
+## Usage
+Run the Streamlit app:
+```bash
+streamlit run streamlit_app.py
