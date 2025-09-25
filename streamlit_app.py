@@ -1,68 +1,62 @@
 import streamlit as st
 import pandas as pd
-import super_tool as sim  # 调用你的 super_tool.py
+from super_tool import TaxParams, SuperParams, MLSParams, ScenarioInput, run_scenario
 
-st.set_page_config(page_title="Super Balance & Tax Simulator", layout="wide")
+st.title("Super Balance & Tax Simulator (AU)")
 
-st.title("🇦🇺 Super Balance & Tax Simulator")
+# --- Sidebar inputs ---
+salary = st.sidebar.number_input("Annual Salary (AUD)", value=100000.0, step=1000.0)
+negative_gearing = st.sidebar.number_input("Negative Gearing Deduction (AUD)", value=30000.0, step=1000.0)
+salary_sacrifice = st.sidebar.number_input("Salary Sacrifice (AUD)", value=8400.0, step=1000.0)
+start_balance = st.sidebar.number_input("Starting Super Balance (AUD)", value=100000.0, step=10000.0)
+years = st.sidebar.slider("Projection Years", min_value=5, max_value=40, value=20, step=1)
+annual_return = st.sidebar.number_input("Annual Return (e.g., 0.06 = 6%)", value=0.06, step=0.01, format="%.2f")
+fees_rate = st.sidebar.number_input("Annual Fee Rate (e.g., 0.0075 = 0.75%)", value=0.0075, step=0.001, format="%.4f")
 
-# --- Sidebar Inputs ---
-st.sidebar.header("Inputs")
-salary = st.sidebar.number_input("Annual salary (AUD)", 0, 5_000_000, 100000, step=1000)
-neg = st.sidebar.number_input("Negative gearing deduction (AUD)", 0, 5_000_000, 30000, step=1000)
-ss = st.sidebar.number_input("Salary sacrifice (annual, AUD)", 0, 30_000, 8400, step=100)
-sg = st.sidebar.number_input("SG rate", 0.00, 0.20, 0.12, step=0.005, format="%.3f")
-cap = st.sidebar.number_input("Concessional cap", 0, 100_000, 30000, step=1000)
-carry = st.sidebar.number_input("Carry-forward available", 0, 1_000_000, 0, step=1000)
-start_bal = st.sidebar.number_input("Start super balance", 0, 10_000_000, 100000, step=1000)
-years = st.sidebar.slider("Projection years", 1, 40, 10)
-annual_ret = st.sidebar.number_input("Annual gross return", 0.00, 0.20, 0.06, step=0.005, format="%.3f")
-fees_rate = st.sidebar.number_input("Annual fee rate", 0.00, 0.05, 0.0075, step=0.0005, format="%.4f")
-private_insured = st.sidebar.checkbox("Private hospital insurance", value=True)
-mls_enabled = st.sidebar.checkbox("Enable MLS (simplified)", value=True)
-mls_threshold = st.sidebar.number_input("MLS threshold", 0, 1_000_000, 90000, step=1000)
-mls_rate = st.sidebar.number_input("MLS rate", 0.00, 0.03, 0.01, step=0.001, format="%.3f")
+# --- Run scenario ---
+tp = TaxParams()
+sp = SuperParams(annual_return=annual_return, fees_rate=fees_rate)
+mls = MLSParams(enabled=False, private_insured=True)
 
-# --- Params ---
-tp = sim.TaxParams()
-sp = sim.SuperParams(
-    cap_concessional=cap,
-    sg_rate=sg,
-    carry_forward_available=carry,
-    earnings_tax_rate=0.15,
-    fees_rate=fees_rate,
-    annual_return=annual_ret
-)
-mls = sim.MLSParams(
-    enabled=mls_enabled,
-    threshold=mls_threshold,
-    rate=mls_rate,
-    private_insured=private_insured
-)
-si = sim.ScenarioInput(
+si = ScenarioInput(
     salary=salary,
-    negative_gearing=neg,
-    salary_sacrifice=ss,
-    other_concessional=0.0,
-    start_super_balance=start_bal,
+    negative_gearing=negative_gearing,
+    salary_sacrifice=salary_sacrifice,
+    start_super_balance=start_balance,
     years=years,
-    private_insured=private_insured
+    private_insured=True
 )
 
-# --- Run calculation ---
-res = sim.run_scenario(si, tp, sp, mls)
+res = run_scenario(si, tp, sp, mls)
 
-# --- Display results ---
-col1, col2, col3 = st.columns(3)
-col1.metric("Taxable income", f"AUD {res.taxable_income:,.0f}")
-col2.metric("Take-home cash", f"AUD {res.take_home_cash:,.0f}")
-col3.metric("Super net in (after 15%)", f"AUD {res.super_net_in:,.0f}")
-
+# --- Caps Table ---
 st.subheader("Caps")
-st.write(res.cap)
+cap_df = pd.DataFrame({
+    "ITEM": ["SG", "TOTAL CAP", "USED", "MAX SALARY SACRIFICE", "OVER BY"],
+    "AMOUNT": [
+        f"{res.cap['sg']:,.2f}",
+        f"{res.cap['total_cap']:,.2f}",
+        f"{res.cap['used']:,.2f}",
+        f"{res.cap['max_salary_sacrifice']:,.2f}",
+        f"{res.cap['over_by']:,.2f}",
+    ]
+})
+st.table(cap_df)
 
+# --- Projection Table ---
 st.subheader("Projection")
-df = pd.DataFrame(res.projection)
-st.dataframe(df, use_container_width=True)
+proj_df = pd.DataFrame(res.projection)
 
-st.download_button("Download Projection CSV", df.to_csv(index=False), "projection.csv", "text/csv")
+# Capitalize headers
+proj_df.columns = [c.upper() for c in proj_df.columns]
+
+# Round and format numbers with accounting style
+for col in proj_df.columns:
+    if col != "YEAR":
+        proj_df[col] = proj_df[col].map(lambda x: f"{x:,.2f}")
+
+st.dataframe(proj_df)
+
+# --- Download CSV ---
+csv = proj_df.to_csv(index=False).encode("utf-8")
+st.download_button("Download Projection CSV", csv, "projection.csv", "text/csv")
