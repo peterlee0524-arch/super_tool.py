@@ -1,18 +1,18 @@
 # Super Balance & Tax Simulator (AU)
 
-一个用于澳洲退休金（super）与个人税务情景测算的命令行/库工具。
+A command-line / library tool for modelling Australian superannuation (super) and personal tax scenarios.  
 
-## 功能
-- 个人所得税（2024–25税率）+ Medicare Levy（2%）
-- 可选 **Medicare Levy Surcharge (MLS)**（用户自设阈值与费率；可用“有/无私人医保”开关）
-- **Negative gearing** 扣除
-- **Concessional cap**（默认30,000）逻辑、**SG默认12%**、**carry-forward** 输入
-- **Division 293** 判定与额外税
-- **Salary sacrifice** 可用额度提示与校验
-- **Super 投资期**收益税（15%）与费用率
-- 余额投影与CSV导出
+## Features
+- Personal income tax (2024–25 tax rates) + Medicare Levy (2%)  
+- Optional **Medicare Levy Surcharge (MLS)** (user-defined thresholds and rates; toggle for private health insurance)  
+- **Negative gearing** deductions  
+- **Concessional cap** logic (default 30,000), **SG default 12%**, carry-forward input  
+- **Division 293** check and additional tax  
+- **Salary sacrifice** allowance calculation and validation  
+- **Super accumulation phase** investment tax (15%) and fee rate  
+- Balance projection and CSV export  
 
-## 安装与使用
+## Installation & Usage
 ```bash
 python super_tool.py --salary 175000 --negative-gearing 60000 \
   --salary-sacrifice 8400 --sg-rate 0.12 --cap 30000 --carry-forward 0 \
