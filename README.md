@@ -1,6 +1,6 @@
 # Super Balance & Tax Simulator (AU)
 
-An interactive Streamlit tool (with a reusable Python library) for modelling Australian superannuation (super) and personal tax scenarios.  
+An interactive **Streamlit** tool (with a reusable Python library) for modelling Australian superannuation (super) and personal tax scenarios.  
 
 ## Features
 - Personal income tax (2024–25 tax rates) + Medicare Levy (2%)  
@@ -18,7 +18,3 @@ Clone the repo and install dependencies:
 git clone https://github.com/yourname/super-simulator.git
 cd super-simulator
 pip install -r requirements.txt
-## Usage
-Run the Streamlit app:
-```bash
-streamlit run streamlit_app.py
