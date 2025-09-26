@@ -13,15 +13,15 @@ st.title("🇦🇺 Super Balance & Tax Simulator (AU)")
 st.sidebar.header("Inputs")
 
 # Income & deductions
-salary = st.sidebar.number_input("Annual Salary (AUD)", min_value=0.0, value=175000.0, step=1000.0, format="%.2f")
-negative_gearing = st.sidebar.number_input("Negative Gearing Deduction (AUD)", min_value=0.0, value=60000.0, step=1000.0, format="%.2f")
+salary = st.sidebar.number_input("Annual Salary (AUD)", min_value=0.0, value=100000.0, step=1000.0, format="%.2f")
+negative_gearing = st.sidebar.number_input("Negative Gearing Deduction (AUD)", min_value=0.0, value=30000.0, step=1000.0, format="%.2f")
 salary_sacrifice = st.sidebar.number_input("Salary Sacrifice (AUD, per year)", min_value=0.0, value=8400.0, step=500.0, format="%.2f")
 
 # Super settings
 sg_rate = st.sidebar.number_input("Employer SG Rate (e.g., 0.12 = 12%)", min_value=0.00, max_value=0.20, value=0.12, step=0.005, format="%.3f")
 cap = st.sidebar.number_input("Concessional Cap (AUD)", min_value=0.0, value=30000.0, step=1000.0, format="%.2f")
 carry_forward = st.sidebar.number_input("Carry-forward Available (AUD)", min_value=0.0, value=0.0, step=1000.0, format="%.2f")
-start_balance = st.sidebar.number_input("Starting Super Balance (AUD)", min_value=0.0, value=200000.0, step=10000.0, format="%.2f")
+start_balance = st.sidebar.number_input("Starting Super Balance (AUD)", min_value=0.0, value=100000.0, step=10000.0, format="%.2f")
 
 years = st.sidebar.slider("Projection Years", min_value=5, max_value=40, value=20, step=1)
 annual_return = st.sidebar.number_input("Annual Return (e.g., 0.06 = 6%)", min_value=0.00, max_value=0.20, value=0.06, step=0.005, format="%.3f")
